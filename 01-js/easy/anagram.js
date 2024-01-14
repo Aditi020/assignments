@@ -19,7 +19,7 @@ function isAnagram(str1, str2) {
   else
     return false;
 }
-module.exports = isAnagram("str1", "str2");
+module.exports = isAnagram;
 
 
 // console.log((isAnagram('openai!', 'open')))
