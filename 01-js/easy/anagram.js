@@ -5,16 +5,21 @@
 */
 
 function isAnagram(str1, str2) {
-  const s1 = str1.toLowerCase();
-  const s2 = str2.toLowerCase();
+  let s1 = str1.toLowerCase();
+  let s2 = str2.toLowerCase();
+  if (s1.length == s2.length) {
+    let A1 = s1.split('').sort().join('');
+    let A2 = s2.split('').sort().join('');
 
-  const A1 = s1.split('').sort().join('');
-  const A2 = s2.split('').sort().join('');
-  return A1 == A2;
+    if (A1 == A2)
+      return true;
+    else
+      return false;
+  }
+  else
+    return false;
 }
+module.exports = isAnagram("str1", "str2");
 
-module.exports = isAnagram("any", "nay");
 
-
-// if (isAnagram("art", "tra"))
-//   console.log("True");
+// console.log((isAnagram('openai!', 'open')))
