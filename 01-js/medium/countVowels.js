@@ -17,5 +17,5 @@ function countVowels(str) {
 
 module.exports = countVowels;
 
-// const str="I am working on my first JS code";
-// console.log("Vowels="+countVowels(str));
+const str="I am working on my first JS code";
+console.log("Vowels="+countVowels(str));

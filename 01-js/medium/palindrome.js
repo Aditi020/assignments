@@ -4,14 +4,14 @@
 */
 
 function isPalindrome(str) {
-  str=str.toLowerCase()
-  if (str==str.split("").reverse().join(""))
-  return true;
+  str = str.toLowerCase().replace(/[^a-z0-9]/g, "")
+  if (str == str.split("").reverse().join(""))
+    return true;
   else
     return false;
 }
 
 module.exports = isPalindrome;
 
-// let str="deified"
-// console.log(isPalindrome(str));
+let str = "A man, a plan, a canal. Panama"
+console.log(isPalindrome(str));
