@@ -13,14 +13,32 @@ const app = express();
 
 let numberOfRequestsForUser = {};
 setInterval(() => {
-    numberOfRequestsForUser = {};
+  // Clear the numberOfRequestsForUser object every 1000 milliseconds (1 second)
+  numberOfRequestsForUser = {};
 }, 1000)
 
-app.get('/user', function(req, res) {
+app.use(function (req, res, next) {
+  const userId = req.headers["user-id"];
+
+  // Check if the user ID exists in the numberOfRequestsForUser object
+  if (numberOfRequestsForUser[userId]) {
+    numberOfRequestsForUser[userId] = numberOfRequestsForUser[userId] + 1;
+    if (numberOfRequestsForUser[userId] > 5) {
+      res.status(404).send("no entry");
+    } else {
+      next();
+    }
+  } else {// If the user ID is not found, initialize the count to 1
+    numberOfRequestsForUser[userId] = 1;
+    next();
+  }
+});
+
+app.get('/user', function (req, res) {
   res.status(200).json({ name: 'john' });
 });
 
-app.post('/user', function(req, res) {
+app.post('/user', function (req, res) {
   res.status(200).json({ msg: 'created dummy user' });
 });
 

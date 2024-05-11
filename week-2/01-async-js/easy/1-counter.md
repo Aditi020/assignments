@@ -4,6 +4,9 @@ We have already covered this in the second lesson, but as an easy recap try to c
 It should go up as time goes by in intervals of 1 second
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-const increaseCounter = () => { console.log(counter) counter += 1 }
+const increaseCounter = () => { 
+    console.log(counter) counter += 1 
+ }
 
-let counter = 0; setInterval(increaseCounter, 1000)
+let counter = 0; 
+setInterval(increaseCounter, 1000)
