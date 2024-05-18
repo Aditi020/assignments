@@ -15,7 +15,7 @@ For this one, in every authenticated requests, you need to send the username and
 This is the reason why this assignment doesn't have a sign in route.
 
 You need to use mongodb to store all the data persistently.
-
+ 
 ## Routes
 ### Admin Routes:
 - POST /admin/signup
@@ -48,3 +48,13 @@ You need to use mongodb to store all the data persistently.
   Description: Lists all the courses purchased by the user.
   Input: Headers: { 'username': 'username', 'password': 'password' }
   Output: { purchasedCourses: [ { id: 1, title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com', published: true }, ... ] }
+
+
+{
+
+        "title":"The Mongoose",
+        "description":"A book on MOngoDB",
+        "imageLink":"imagelink.com",
+        "price":123
+
+}

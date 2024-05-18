@@ -5,39 +5,43 @@ const { User, Course } = require("../db");
 const { default: mongoose } = require("mongoose");
 
 // User Routes
-router.post('/signup', (req, res) => {
-    // Implement user signup logic
+router.post('/signup', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-    User.create({
-        username,
-        password,
-    });
-    res.json({
-        message: "User created successfully",
-    });
+
+    // checks if a user alredy exists in the DB
+    let existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+        res.json({
+            message: "User already signed up",
+        });
+    }
+    else {
+        await User.create({
+            username: username,
+            password: password,
+        });
+
+        res.json({
+            message: "User created successfully",
+        });
+    }
 });
 
 
 router.get('/courses', async (req, res) => {
     // Implement listing all courses logic
-    const users = await User.find({});
-    res.send({ users: users });
-});
-
-
-router.get('/all-courses', async (req, res) => {
-    const courses = await Course.find({});
-
-    res.json({
-        courses: courses,
+    const response = await Course.find({});
+    res.send({
+        course: response
     });
 });
 
 
-router.post('/courses/:courseId', userMiddleware, (req, res) => {
+router.post('/courses/:courseId', userMiddleware, async (req, res) => {
     // Implement course purchase logic
-}); const courseId = req.params.courseId;
+    const courseId = req.params.courseId;
     const username = req.headers.username;
 
     await User.updateOne(
@@ -45,7 +49,7 @@ router.post('/courses/:courseId', userMiddleware, (req, res) => {
             username: username,
         },
         {
-            $push: {
+            "$push": {
                 purchasedCourses: courseId,
             },
         }
@@ -53,8 +57,9 @@ router.post('/courses/:courseId', userMiddleware, (req, res) => {
     res.json({
         message: "Purchase complete!",
     })
+});
 
-router.get('/purchasedCourses', userMiddleware, async(req, res) => {
+router.get('/purchasedCourses', userMiddleware, async (req, res) => {
     // Implement fetching purchased courses logic
     const user = await User.findOne({
         username: req.headers.username,
@@ -63,7 +68,7 @@ router.get('/purchasedCourses', userMiddleware, async(req, res) => {
     console.log(user.purchasedCourses);
     const courses = await Course.find({
         _id: {
-            $in: user.purchasedCourses,
+            "$in": user.purchasedCourses,
         },
     });
 
