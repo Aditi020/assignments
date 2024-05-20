@@ -7,15 +7,15 @@ mongoose.connect('mongodb+srv://aditikumar2224:AK0MongoDB@cluster0.zie5hxe.mongo
 const AdminSchema = new mongoose.Schema({
     // Schema definition here
     username: String,
-    password: String.min(6)
+    password: String
 });
 
 const UserSchema = new mongoose.Schema({
     // Schema definition here
     username: String,
-    password: String.min(6),
+    password: String,
     purchased_course: [{
-        type: mongoose.schema.Type.objectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Course'
     }]
 });

@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const adminMiddleware = require("../middleware/admin");
-const { Admin, User, Course } = require("../db");
+const { Admin, Course } = require("../db");
 const { JWT_SECRET } = require("../config");
 const router = Router();
 const jwt = require("jsonwebtoken");
@@ -12,12 +12,11 @@ router.post('/signup', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    // check if a user with this username already exists
+    // check if a admin with this username already exists
     await Admin.create({
         username: username,
         password: password
     })
-
     res.json({
         message: 'Admin created successfully'
     })
@@ -25,17 +24,16 @@ router.post('/signup', async (req, res) => {
 
 router.post('/signin', (async (req, res) => {
     // Implement admin signup logic
-    const { Admin } = require("../db");
-    // should check in the database
     const username = req.headers.username;
     const password = req.headers.password;
+    console.log(JWT_SECRET);
 
     const AdminExist = await Admin.findOne({
-        username: username,
-        password: password,
+        username,
+        password
     });
     if (AdminExist) {
-        const token = jwt.sign(username, JWT_SECRET)
+        const token = jwt.sign({ username }, JWT_SECRET)
         res.json({
             token
         })
