@@ -1,21 +1,31 @@
+const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require("../config");
-const jwt = require("jsonwebtoken");
+const { User } = require("../db")
+// Middleware for handling auth
+async function UserMiddleware(req, res, next) {
+    // Implement User auth logic
+    // You need to check the headers and validate the User from the User DB. Check readme for the exact headers to be expected
 
-function userMiddleware(req, res, next) {
     const token = req.headers.authorization;
     const words = token.split(" ");
     const jwtToken = words[1];
-    const decodedValue = jwt.verify(jwtToken, JWT_SECRET);
-
-    if (decodedValue.username) {
-        req.username = decodedValue.username;
-        // req.randomData = "Adsadsadsadssd";
-        next();
-    } else {
-        res.status(403).json({
-            msg: "You are not authenticated"
-        })
+    try {
+        const decodedValue = jwt.verify(jwtToken, JWT_SECRET);
+        const isUser = await User.findOne({ username: decodedValue});
+        console.log(decodedValue);
+        if (isUser) {
+            req.username = decodedValue;
+            next();
+        } else {
+            res.status(403).json({
+                msg: "You are not authenticated",
+            });
+        }
+    } catch (e) {
+        res.json({
+            msg: "Incorrect inputs",
+        });
     }
 }
 
-module.exports = userMiddleware;
+module.exports = UserMiddleware;

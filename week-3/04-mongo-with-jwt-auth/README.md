@@ -69,3 +69,9 @@ You need to use mongodb to store all the data persistently.
         "price":228
 
 }
+
+{
+
+"username":"harkirat@gmail.com"
+"password:"123"
+}

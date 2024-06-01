@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const router = Router();
-const userMiddleware = require("../middleware/user");
+const UserMiddleware = require("../middleware/user");
 const { User, Course } = require("../db");
 const { JWT_SECRET } = require("../config");
 const jwt = require("jsonwebtoken");
@@ -12,13 +12,24 @@ router.post('/signup', async (req, res) => {
     const password = req.body.password;
 
     // check if a user with this username already exists
-    await User.create({
+    const UserExist = await User.findOne({
         username: username,
         password: password
-    })
-    res.json({
-        message: 'User created successfully'
-    })
+    });
+    if (!(UserExist)) {
+        await User.create({
+            username: username,
+            password: password
+        })
+        res.json({
+            message: 'User created successfully'
+        })
+    }
+    else {
+        res.json({
+            message: 'User alredy exist'
+        })
+    }
 });
 
 router.post('/signin', async (req, res) => {
@@ -53,18 +64,19 @@ router.get('/courses', async (req, res) => {
     })
 });
 
-router.post('/courses/:courseId', userMiddleware, async (req, res) => {
+router.post('/courses/:courseId', UserMiddleware, async (req, res) => {
     // Implement course purchase logic
     const courseId = req.params.courseId;
     const username = req.username;
 
-    User.updateOne(
+    //User.updateOne() method in Mongoose is asynchronous. Therefore, you need to await the update operation to ensure that it completes before sending the response using res.json().
+    await User.updateOne(
         {
             username: username,
         },
         {
             "$push": {
-                purchasedCourses: courseId,
+                purchased_course: courseId,
             },
         }
     );
@@ -73,19 +85,27 @@ router.post('/courses/:courseId', userMiddleware, async (req, res) => {
     })
 });
 
-router.get('/purchasedCourses', userMiddleware, async (req, res) => {
+router.get('/purchasedCourses', UserMiddleware, async (req, res) => {
     // Implement fetching purchased courses logic
-    const user = User.findOne({
-        username: req.headers.username,
-    })
-    console.log; (user.purchasedCourses)
-    const courses = await Course.find({
-        _id: {
-            "$in": user.purchasedCourses,  //$in =>  find the courses whose _id is present in user.purchasedCourses => that sepcific user ke andar jo _id hai wo course _id se courses present in Course table.
-        },
-    });
-    res.json({
-        courses: courses,
-    })
+    try {
+        const user = await User.findOne({
+            username: req.headers.username,
+        })
+        console.log(user.purchased_course)
+        const courses = await Course.find({
+            _id: {
+                "$in": user.purchased_course,  //$in =>  find the courses whose _id is present in user.purchasedCourses => that sepcific user ke andar jo _id hai wo course _id se courses present in Course table.
+            },
+        });
+        res.json({
+            courses: courses,
+        })
+    }
+    catch (error) {
+        res.status(500).json({
+            message: "Error fetching purchased courses",
+            error: error.message,
+        });
+    }
 });
 module.exports = router
